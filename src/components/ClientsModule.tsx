@@ -54,7 +54,7 @@ export function ClientsModule() {
     const labels = { whatsapp: "abrir WhatsApp", phone: "llamar", email: "enviar un correo" };
     if (!window.confirm(`¿Querés ${labels[action]} para ${customer.legalName}?`)) return;
     if (action === "whatsapp") window.open(url, "_blank", "noopener,noreferrer");
-    else window.location.href = url;
+    else window.location.assign(url);
   }
 
   return <section className="clients-module">

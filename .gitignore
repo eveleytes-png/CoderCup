@@ -2,10 +2,9 @@ node_modules/
 .pnpm-store/
 .next/
 .next-stale-*/
-.vinext/
-.wrangler/
 dist/
 output/
+.vercel/
 .env*.local
 coverage/
 tmp/

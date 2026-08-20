@@ -11,11 +11,11 @@ pnpm dev
 
 Abrir `http://localhost:3000`. Sin configuración externa, los datos quedan guardados en el navegador actual.
 
-## Persistencia en Supabase
+## Despliegue en Vercel
 
-1. Crear un proyecto en Supabase.
-2. Ejecutar `supabase/schema.sql` en el SQL Editor.
-3. Copiar `.env.example` como `.env.local` y completar la URL y la clave pública `anon`.
-4. Reiniciar la aplicación.
+1. Conectar este repositorio a un proyecto de Vercel.
+2. Crear una base Neon Postgres y un store público de Vercel Blob desde el Marketplace de Vercel.
+3. Ejecutar `drizzle/0000_initial.sql` en Neon.
+4. Configurar las variables `DATABASE_URL` y `BLOB_READ_WRITE_TOKEN` en Vercel y en `.env.local` para el desarrollo local.
 
-La clave `anon` es pública por diseño. Nunca colocar una clave `service_role` en variables `NEXT_PUBLIC_*`.
+Las credenciales son privadas: no deben llevar el prefijo `NEXT_PUBLIC_` ni subirse al repositorio.

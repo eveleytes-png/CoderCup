@@ -3,14 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vinext dev",
-    "build": "vinext build",
-    "start": "vinext start",
-    "lint": "eslint .",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint src next.config.ts",
     "test": "vitest run"
   },
   "dependencies": {
+    "@neondatabase/serverless": "latest",
     "@supabase/supabase-js": "latest",
+    "@vercel/blob": "latest",
     "drizzle-orm": "0.45.2",
     "lucide-react": "latest",
     "next": "latest",
@@ -20,21 +22,14 @@
     "xlsx": "latest"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "1.37.1",
-    "@openai/sites-vite-plugin": "0.1.0",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "@vitejs/plugin-react": "6.0.2",
-    "@vitejs/plugin-rsc": "0.5.26",
     "eslint": "^9.39.0",
     "eslint-config-next": "latest",
     "react-server-dom-webpack": "19.2.6",
     "typescript": "^6.0.0",
-    "vinext": "1.0.0-beta.2",
-    "vite": "8.0.13",
-    "vitest": "latest",
-    "wrangler": "4.92.0"
+    "vitest": "latest"
   },
   "type": "module"
 }
