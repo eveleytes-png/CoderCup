@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
-import { Building2, CheckCircle2, FileText, FileUp, ImagePlus, PackageSearch, Search, Share2, Trash2, UserRound, X } from "lucide-react";
+import { Building2, CheckCircle2, FileText, FileUp, ImagePlus, Menu, PackageSearch, Search, Share2, Trash2, UserRound, X } from "lucide-react";
 import { parseLanusPdf } from "@/lib/lanus-parser";
 import { parseLanusExcel } from "@/lib/lanus-excel-parser";
 import { PORCELUZ_PLASTIC_PROVIDER, PORCELUZ_PORCELAIN_PROVIDER, parsePorceluzExcel } from "@/lib/porceluz-parser";
@@ -26,6 +26,7 @@ type ImportSummary = { providerName: string; newProducts: number; updatedProduct
 
 export function CatalogApp() {
   const [activeSection, setActiveSection] = useState<"catalog" | "clients">("catalog");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [providers, setProviders] = useState<Provider[]>(providerDefaults);
   const [profile, setProfile] = useState<BrokerProfile>(emptyProfile);
@@ -74,10 +75,11 @@ export function CatalogApp() {
       else if (selected) setSelected(null);
       else if (catalogOpen) setCatalogOpen(false);
       else if (choosingProvider) setChoosingProvider(false);
+      else if (mobileMenuOpen) setMobileMenuOpen(false);
     }
     window.addEventListener("keydown", closeModalWithEscape);
     return () => window.removeEventListener("keydown", closeModalWithEscape);
-  }, [catalogOpen, choosingProvider, editingProfile, editingProvider, missingReviewOpen, selected]);
+  }, [catalogOpen, choosingProvider, editingProfile, editingProvider, missingReviewOpen, mobileMenuOpen, selected]);
 
   const visible = useMemo(() => {
     return products.filter((product) => (providerFilter === "all" || product.providerId === providerFilter) && matchesProduct(product, query));
@@ -258,13 +260,14 @@ export function CatalogApp() {
     <main>
       <header className="topbar">
         <div className="company-identity"><button className="company-avatar" aria-label="Abrir mi perfil" title="Mi perfil" onClick={openProfile}>{profile.imageUrl ? <img src={profile.imageUrl} alt="Logo del corredor"/> : getInitials(profile.name || "Mi empresa")}</button><strong>{profile.name || "Mi empresa"}</strong></div>
-        <nav className="main-nav" aria-label="Navegación principal"><button className={activeSection === "catalog" ? "active" : ""} onClick={() => setActiveSection("catalog")}>Catálogo</button><button className={activeSection === "clients" ? "active" : ""} onClick={() => setActiveSection("clients")}>Clientes</button></nav>
+        <nav className={`main-nav${mobileMenuOpen ? " mobile-open" : ""}`} aria-label="Navegación principal"><button className={activeSection === "catalog" ? "active" : ""} onClick={() => { setActiveSection("catalog"); setMobileMenuOpen(false); }}>Catálogo</button><button className={activeSection === "clients" ? "active" : ""} onClick={() => { setActiveSection("clients"); setMobileMenuOpen(false); }}>Clientes</button></nav>
         <div className="header-account"><span className="storage-status"><i/>{process.env.NEXT_PUBLIC_SUPABASE_URL ? "Nube conectada" : "Guardado en este navegador"}</span></div>
+        <button className="mobile-menu-toggle" type="button" aria-label="Abrir menú" aria-expanded={mobileMenuOpen} onClick={() => setMobileMenuOpen((isOpen) => !isOpen)}><Menu size={24}/></button>
+        {mobileMenuOpen && <button className="mobile-menu-backdrop" type="button" aria-label="Cerrar menú" onClick={() => setMobileMenuOpen(false)}/>}
       </header>
 
       {activeSection === "catalog" ? <>
       <section className="hero">
-        <div><span className="eyebrow">PROVEEDORES</span></div>
         <button className="primary" onClick={() => setChoosingProvider(true)} disabled={importing}>
           <FileUp size={20} />{importing ? "Procesando lista…" : products.length ? "Importar o actualizar" : "Importar una lista"}
         </button>
@@ -307,7 +310,7 @@ export function CatalogApp() {
           <div className="empty"><PackageSearch size={42}/><h3>{products.length ? "No encontramos coincidencias" : "Todavía no hay productos"}</h3><p>{products.length ? "Probá con otro código o descripción." : "Importá el PDF real de Lanús para comenzar."}</p></div>
         ) : (
           <div className="table-wrap"><table><thead><tr><th>Producto</th><th>Precio de lista</th><th>Condiciones de pago</th><th>Imagen</th></tr></thead><tbody>
-            {visible.map((product) => <tr key={product.id}>
+            {visible.map((product) => <tr className="product-row" key={product.id} onClick={() => openProduct(product)}>
               <td><button className="product-link" onClick={() => openProduct(product)}><strong>{product.code}</strong><span>{product.description}</span>{product.status === "discontinued" && <em className="discontinued-badge">Descontinuado</em>}<small>{product.providerName}</small></button></td>
               <td className={`price-cell${product.priceStatus === "quote" ? " quote" : ""}`}><strong>{formatPrice(product)}</strong><small>{product.priceStatus === "quote" ? "Consultar al proveedor" : `${product.currency} · sin IVA`}</small></td>
               <td><div className="discounts">{product.paymentDiscounts.map((discount) => <span key={`${discount.label}-${discount.resultingPrice}`}><b>{money.format(discount.resultingPrice)}</b>{discount.label}</span>)}</div></td>
