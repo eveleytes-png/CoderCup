@@ -65,6 +65,7 @@ input::placeholder,textarea::placeholder { color:var(--color-text-muted); }
 .provider-card p,.provider-card .provider-updated,.provider-card>strong span,.product-link small,td>small,.clients-heading p,.clients-toolbar small,.client-list small { color:var(--color-text-secondary); }
 .provider-editor,.client-editor,.catalog-generator,.provider-picker,.modal { background:var(--color-surface); }
 .provider-fields input,.provider-fields textarea,.client-fields input,.client-fields textarea,.provider-filter select,.search { border-color:var(--color-border); color:var(--color-text-primary); background:var(--color-surface); }
+.provider-filter select,.search input { font-size:16px; line-height:1.25; }
 .search:focus-within { border-color:var(--color-accent); box-shadow:0 0 0 3px rgba(45,125,111,.12); }
 th { background:#EDF1F5; color:var(--color-text-secondary); }
 td { border-color:var(--color-border); }
@@ -254,7 +255,7 @@ tbody td:nth-child(2)>small { color:var(--color-text-secondary); font-size:12px;
 
 @media(max-width:767px) {
   .topbar { position:relative; min-height:56px; height:56px; padding:0 16px; display:grid; grid-template-columns:auto 1fr auto auto; gap:12px; overflow:visible; }
-  .company-identity strong { display:none; }
+  .company-identity strong { display:block; max-width:min(42vw,180px); font-size:13px; }
   .company-avatar { width:32px; height:32px; flex-basis:32px; font-size:10px; }
   .header-account { grid-column:3; grid-row:1; margin:0; }
   .storage-status { display:flex; gap:0; }

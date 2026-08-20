@@ -5,6 +5,7 @@ import "./refinements.css";
 export const metadata: Metadata = {
   title: "Catálogo del Corredor",
   description: "Productos normalizados de múltiples proveedores",
+  manifest: "/api/app-manifest",
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1 };

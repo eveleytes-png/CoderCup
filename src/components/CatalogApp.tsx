@@ -67,6 +67,23 @@ export function CatalogApp() {
   }, []);
 
   useEffect(() => {
+    const name = profile.name.trim() || "Catálogo del Corredor";
+    document.title = name;
+    setHeadContent('meta[name="application-name"]', "name", "application-name", name);
+    setHeadContent('meta[name="apple-mobile-web-app-title"]', "name", "apple-mobile-web-app-title", name);
+    if (profile.imageUrl) {
+      setHeadContent('link[rel="icon"]', "rel", "icon", profile.imageUrl, "image/jpeg");
+      setHeadContent('link[rel="apple-touch-icon"]', "rel", "apple-touch-icon", profile.imageUrl, "image/jpeg");
+    }
+    const manifest = document.querySelector<HTMLLinkElement>('link[rel="manifest"]');
+    if (manifest) {
+      const search = new URLSearchParams({ name });
+      if (profile.imageUrl) search.set("icon", profile.imageUrl);
+      manifest.href = `/api/app-manifest?${search.toString()}`;
+    }
+  }, [profile]);
+
+  useEffect(() => {
     function closeModalWithEscape(event: KeyboardEvent) {
       if (event.key !== "Escape") return;
       if (missingReviewOpen) setMissingReviewOpen(false);
@@ -392,3 +409,14 @@ function formatProviderDate(value: string) {
   return `${part("day")} de ${part("month").replace(".", "")} de ${part("year")}`;
 }
 function getInitials(value: string) { return value.split(/\s+/).filter(Boolean).slice(0, 2).map((word) => word[0]?.toUpperCase()).join("") || "PR"; }
+function setHeadContent(selector: string, attribute: string, attributeValue: string, content: string, type?: string) {
+  let element = document.querySelector<HTMLLinkElement | HTMLMetaElement>(selector);
+  if (!element) {
+    element = document.createElement(attribute === "rel" ? "link" : "meta");
+    element.setAttribute(attribute, attributeValue);
+    document.head.append(element);
+  }
+  if (attribute === "rel") (element as HTMLLinkElement).href = content;
+  else element.setAttribute("content", content);
+  if (type) element.setAttribute("type", type);
+}
