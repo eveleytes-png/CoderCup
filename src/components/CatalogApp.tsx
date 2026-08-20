@@ -5,7 +5,7 @@ import { Building2, CheckCircle2, FileText, FileUp, ImagePlus, Menu, PackageSear
 import { parseLanusPdf } from "@/lib/lanus-parser";
 import { parseLanusExcel } from "@/lib/lanus-excel-parser";
 import { PORCELUZ_PLASTIC_PROVIDER, PORCELUZ_PORCELAIN_PROVIDER, parsePorceluzExcel } from "@/lib/porceluz-parser";
-import { loadBrokerProfile, loadProducts, loadProviders, removeManualImage, removeProviderCoverImage, resolveMissingProducts, saveBrokerProfile, saveManualImage, saveProvider, saveProviderCoverImage, setProductStatus, shareManualImage, upsertImportedProducts } from "@/lib/storage";
+import { loadProducts, loadProviders, removeManualImage, removeProviderCoverImage, resolveMissingProducts, saveBrokerProfile, saveManualImage, saveProvider, saveProviderCoverImage, setProductStatus, shareManualImage, upsertImportedProducts } from "@/lib/storage";
 import { matchesProduct } from "@/lib/product-search";
 import { catalogProducts, catalogProviders, downloadCatalogExcel, downloadCatalogPdf, type CatalogFormat } from "@/lib/catalog-export";
 import type { BrokerProfile, Product, Provider } from "@/lib/types";
@@ -20,16 +20,15 @@ const importProviders = [
 ] as const;
 type ImportProviderId = typeof importProviders[number]["id"];
 const providerDefaults: Provider[] = importProviders.map((provider) => ({ id: provider.id, name: provider.name, legalName: provider.name }));
-const emptyProfile: BrokerProfile = { name: "", imageUrl: null, phone: "", whatsapp: "", email: "" };
 type MissingDecision = "delete" | "discontinue";
 type ImportSummary = { providerName: string; newProducts: number; updatedProducts: number; missingProducts: number };
 
-export function CatalogApp() {
+export function CatalogApp({ initialProfile }: { initialProfile: BrokerProfile }) {
   const [activeSection, setActiveSection] = useState<"catalog" | "clients">("catalog");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [providers, setProviders] = useState<Provider[]>(providerDefaults);
-  const [profile, setProfile] = useState<BrokerProfile>(emptyProfile);
+  const [profile, setProfile] = useState<BrokerProfile>(initialProfile);
   const [editingProfile, setEditingProfile] = useState<BrokerProfile | null>(null);
   const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
@@ -63,7 +62,7 @@ export function CatalogApp() {
   const importInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    Promise.all([loadProducts(), loadProviders(providerDefaults), loadBrokerProfile()]).then(([loadedProducts, loadedProviders, loadedProfile]) => { setProducts(loadedProducts); setProviders(loadedProviders); setProfile(loadedProfile); }).catch((cause) => setError(messageOf(cause))).finally(() => setLoading(false));
+    Promise.all([loadProducts(), loadProviders(providerDefaults)]).then(([loadedProducts, loadedProviders]) => { setProducts(loadedProducts); setProviders(loadedProviders); }).catch((cause) => setError(messageOf(cause))).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
