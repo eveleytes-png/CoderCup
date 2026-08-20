@@ -44,6 +44,11 @@ async function uploadHostedImage(path: string, value: Blob): Promise<string> {
   return (await response.json() as { url: string }).url;
 }
 
+async function deleteHostedImage(path: string): Promise<void> {
+  const response = await fetch(`/api/images/${path}`, { method: "DELETE" });
+  if (!response.ok) throw new Error("No se pudo eliminar la imagen publicada.");
+}
+
 const emptyBrokerProfile: BrokerProfile = { name: "", imageUrl: null, phone: "", whatsapp: "", email: "" };
 
 type AppBackup = { version: 1; products: Product[]; providers: Provider[]; customers: Customer[]; profile: BrokerProfile };
@@ -256,7 +261,7 @@ export async function saveProviderCoverImage(provider: Provider, file: File): Pr
 export async function removeProviderCoverImage(provider: Provider): Promise<Provider> {
   const updated = { ...provider, coverImageUrl: null };
   if (hostedStorage()) {
-    await fetch(`/api/images/provider-covers/${provider.id}.jpg`, { method: "DELETE" });
+    await deleteHostedImage(`provider-covers/${provider.id}.jpg`);
     await saveProvider(updated);
     return updated;
   }
