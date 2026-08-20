@@ -65,7 +65,7 @@ input::placeholder,textarea::placeholder { color:var(--color-text-muted); }
 .provider-card p,.provider-card .provider-updated,.provider-card>strong span,.product-link small,td>small,.clients-heading p,.clients-toolbar small,.client-list small { color:var(--color-text-secondary); }
 .provider-editor,.client-editor,.catalog-generator,.provider-picker,.modal { background:var(--color-surface); }
 .provider-fields input,.provider-fields textarea,.client-fields input,.client-fields textarea,.provider-filter select,.search { border-color:var(--color-border); color:var(--color-text-primary); background:var(--color-surface); }
-.provider-filter select,.search input { font-size:16px; line-height:1.25; }
+.search input { font-size:13px; }
 .search:focus-within { border-color:var(--color-accent); box-shadow:0 0 0 3px rgba(45,125,111,.12); }
 th { background:#EDF1F5; color:var(--color-text-secondary); }
 td { border-color:var(--color-border); }
