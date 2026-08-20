@@ -153,8 +153,9 @@ function addProductPages(pages: PdfPage[], providerName: string, products: Produ
     }
     const rowBottom = rowTop - height;
     if (rowIndex % 2 === 1) page.rects.push({ x: 30, y: rowBottom, width: 535, height, color: [0.973, 0.973, 0.973] });
-    const baseline = rowTop - 18;
-    if (image) page.images.push(placeContainedImage(image, 34, baseline - 61, 70, 70));
+    const contentHeight = Math.max(descriptionLines.length * 13, discountRows * 15);
+    const baseline = image ? rowBottom + 10 + contentHeight - 13 : rowTop - 18;
+    if (image) page.images.push(placeContainedImage(image, 34, rowBottom + 5, 70, 70));
     page.lines.push({ text: product.code, x: 110, y: baseline, size: 9, font: "mono" });
     const descriptionX = 170;
     descriptionLines.forEach((text, index) => page.lines.push({ text, x: descriptionX, y: baseline - index * 13, size: 9 }));

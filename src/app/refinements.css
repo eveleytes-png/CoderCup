@@ -117,8 +117,6 @@ tbody tr:hover td,.client-row:hover { background:var(--color-background); }
 .profile-fields input:focus { border-color:var(--color-accent); box-shadow:0 0 0 3px rgba(45,125,111,.12); }
 .profile-error { color:var(--color-danger); margin:14px 0 0; font-size:12px; }
 .profile-save { margin:22px 0 0 auto; min-width:120px; }
-.backup-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; padding-top:16px; border-top:1px solid var(--color-border); }
-.backup-actions .secondary { cursor:pointer; font-size:12px; }
 
 .notice.import-summary { align-items:flex-start; color:var(--color-primary); background:rgba(30,58,95,.07); border:1px solid rgba(30,58,95,.12); }
 .import-summary>div { display:grid; gap:3px; flex:1; }
@@ -143,7 +141,28 @@ tbody tr:hover td,.client-row:hover { background:var(--color-background); }
 .product-status .discontinued-badge { margin:0!important; }
 .product-status .secondary { padding:7px 10px; font-size:11px; }
 
+/* Escala compacta para trabajar con muchos proveedores y pantallas pequeñas. */
+.hero,.providers-grid,.catalog,.notice { width:min(1100px,92vw); }
+.hero { padding-top:34px; padding-bottom:22px; }
+.hero h1 { max-width:660px; margin:9px 0 10px; font-size:clamp(29px,3.6vw,41px); }
+.hero .primary { padding:11px 15px; }
+.providers-grid { grid-template-columns:repeat(auto-fit,minmax(265px,1fr)); gap:12px; }
+.provider-card { min-height:112px; padding:12px 13px; gap:11px; border-radius:12px; }
+.provider-visual { width:54px; height:66px; flex-basis:54px; border-radius:9px; }
+.provider-visual span { font-size:17px; }
+.provider-card h2 { margin:3px 0; font-size:16px; }
+.provider-card p { font-size:11px; }
+.provider-card>strong { font-size:20px; }
+.provider-card .provider-updated { margin-top:6px; font-size:9px; }
+.catalog { margin-top:22px; }
+.catalog-heading { padding:20px; }
+td { padding-top:15px; padding-bottom:15px; }
+
 @media(max-width:760px) {
+  .hero { padding-top:24px; }
+  .hero h1 { font-size:30px; }
+  .providers-grid { grid-template-columns:1fr; }
+  .provider-card { min-height:98px; }
   .missing-list article { grid-template-columns:1fr; }
   .missing-actions { flex-direction:column; }
   .notice.import-summary { flex-wrap:wrap; }

@@ -1,11 +1,11 @@
 "use client";
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
-import { Building2, CheckCircle2, Download, FileText, FileUp, ImagePlus, PackageSearch, Search, Share2, Trash2, Upload, UserRound, X } from "lucide-react";
+import { Building2, CheckCircle2, FileText, FileUp, ImagePlus, PackageSearch, Search, Share2, Trash2, UserRound, X } from "lucide-react";
 import { parseLanusPdf } from "@/lib/lanus-parser";
 import { parseLanusExcel } from "@/lib/lanus-excel-parser";
 import { PORCELUZ_PLASTIC_PROVIDER, PORCELUZ_PORCELAIN_PROVIDER, parsePorceluzExcel } from "@/lib/porceluz-parser";
-import { downloadLocalBackup, loadBrokerProfile, loadProducts, loadProviders, removeManualImage, removeProviderCoverImage, resolveMissingProducts, restoreBackup, saveBrokerProfile, saveManualImage, saveProvider, saveProviderCoverImage, setProductStatus, shareManualImage, upsertImportedProducts } from "@/lib/storage";
+import { loadBrokerProfile, loadProducts, loadProviders, removeManualImage, removeProviderCoverImage, resolveMissingProducts, saveBrokerProfile, saveManualImage, saveProvider, saveProviderCoverImage, setProductStatus, shareManualImage, upsertImportedProducts } from "@/lib/storage";
 import { matchesProduct } from "@/lib/product-search";
 import { catalogProducts, catalogProviders, downloadCatalogExcel, downloadCatalogPdf, type CatalogFormat } from "@/lib/catalog-export";
 import type { BrokerProfile, Product, Provider } from "@/lib/types";
@@ -34,7 +34,6 @@ export function CatalogApp() {
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
-  const [restoringBackup, setRestoringBackup] = useState(false);
   const [query, setQuery] = useState("");
   const [providerFilter, setProviderFilter] = useState("all");
   const [loading, setLoading] = useState(true);
@@ -255,14 +254,6 @@ export function CatalogApp() {
     finally { setSavingProfile(false); }
   }
 
-  async function importBackup(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0]; event.target.value = "";
-    if (!file) return;
-    setRestoringBackup(true); setProfileError(null);
-    try { await restoreBackup(file); window.location.reload(); }
-    catch (cause) { setProfileError(messageOf(cause)); setRestoringBackup(false); }
-  }
-
   return (
     <main>
       <header className="topbar">
@@ -341,12 +332,12 @@ export function CatalogApp() {
 
       {editingProvider && <div className="modal-backdrop" onMouseDown={() => setEditingProvider(null)}><section className="provider-editor" onMouseDown={(event) => event.stopPropagation()}>
         <button className="close" aria-label="Cerrar" onClick={() => setEditingProvider(null)}><X/></button>
-        <span className="eyebrow">PROVEEDOR</span><h2>Editar proveedor</h2>
+        <span className="eyebrow">PROVEEDOR</span><h2>Editar datos proveedor</h2>
         <div className="provider-editor-grid"><div className="provider-fields">
           <label>Razón social<input value={editingProvider.legalName ?? ""} onChange={(event) => setEditingProvider({ ...editingProvider, legalName: event.target.value })}/></label>
           <label>Nombre de fantasía<input value={editingProvider.fantasyName ?? ""} onChange={(event) => setEditingProvider({ ...editingProvider, fantasyName: event.target.value })}/><small>Este nombre aparecerá como título en el catálogo PDF</small></label>
           <label>Contacto<input value={editingProvider.contact ?? ""} onChange={(event) => setEditingProvider({ ...editingProvider, contact: event.target.value })}/></label>
-          <div className="coordinate-fields"><label>Latitud<input inputMode="decimal" value={editingProvider.latitude ?? ""} onChange={(event) => setEditingProvider({ ...editingProvider, latitude: event.target.value })}/></label><label>Longitud<input inputMode="decimal" value={editingProvider.longitude ?? ""} onChange={(event) => setEditingProvider({ ...editingProvider, longitude: event.target.value })}/></label></div>
+          <label>Coordenadas<input value={[editingProvider.latitude, editingProvider.longitude].filter(Boolean).join(", ")} placeholder="-27.385937, -55.915104" onChange={(event) => { const [latitude = "", longitude = ""] = event.target.value.split(",", 2); setEditingProvider({ ...editingProvider, latitude: latitude.trim(), longitude: longitude.trimStart() }); }}/><small>Pegá latitud y longitud separadas por una coma.</small></label>
           <label>Descripción<textarea rows={4} value={editingProvider.description ?? ""} onChange={(event) => setEditingProvider({ ...editingProvider, description: event.target.value })}/></label>
         </div><div className="provider-cover"><strong>Foto de portada del catálogo</strong><div className="cover-preview">{providerCoverPreview ? <img src={providerCoverPreview} alt="Previsualización de portada"/> : <><ImagePlus size={42}/><span>Sin portada</span></>}</div><div className="cover-actions"><label className="upload"><ImagePlus size={18}/>Cargar IMG<input hidden type="file" accept="image/jpeg,image/png" onChange={chooseProviderCover}/></label><button className="danger" disabled={!providerCoverPreview || savingProvider} onClick={deleteProviderCover}><Trash2 size={18}/>Eliminar</button></div></div></div>
         <button className="primary provider-save" disabled={savingProvider} onClick={saveProviderChanges}>{savingProvider ? "Guardando…" : "Guardar cambios"}</button>
@@ -378,7 +369,6 @@ export function CatalogApp() {
           <label>WhatsApp<input type="tel" value={editingProfile.whatsapp} onChange={(event) => setEditingProfile({ ...editingProfile, whatsapp: event.target.value })}/></label>
           <label>Mail<input type="email" value={editingProfile.email} onChange={(event) => setEditingProfile({ ...editingProfile, email: event.target.value })}/></label>
         </div>
-        <div className="backup-actions"><button className="secondary" type="button" onClick={downloadLocalBackup}><Download size={17}/>Descargar respaldo</button><label className="secondary"><Upload size={17}/>{restoringBackup ? "Restaurando…" : "Restaurar respaldo"}<input hidden type="file" accept="application/json,.json" onChange={importBackup}/></label></div>
         {profileError && <p className="profile-error">{profileError}</p>}
         <button className="primary profile-save" disabled={savingProfile} onClick={persistProfile}>{savingProfile ? "Guardando…" : "Guardar"}</button>
       </section></div>}
