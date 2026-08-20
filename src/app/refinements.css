@@ -117,6 +117,8 @@ tbody tr:hover td,.client-row:hover { background:var(--color-background); }
 .profile-fields input:focus { border-color:var(--color-accent); box-shadow:0 0 0 3px rgba(45,125,111,.12); }
 .profile-error { color:var(--color-danger); margin:14px 0 0; font-size:12px; }
 .profile-save { margin:22px 0 0 auto; min-width:120px; }
+.backup-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; padding-top:16px; border-top:1px solid var(--color-border); }
+.backup-actions .secondary { cursor:pointer; font-size:12px; }
 
 .notice.import-summary { align-items:flex-start; color:var(--color-primary); background:rgba(30,58,95,.07); border:1px solid rgba(30,58,95,.12); }
 .import-summary>div { display:grid; gap:3px; flex:1; }

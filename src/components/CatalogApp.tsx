@@ -1,11 +1,11 @@
 "use client";
 
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
-import { Building2, CheckCircle2, FileText, FileUp, ImagePlus, PackageSearch, Search, Share2, Trash2, UserRound, X } from "lucide-react";
+import { Building2, CheckCircle2, Download, FileText, FileUp, ImagePlus, PackageSearch, Search, Share2, Trash2, Upload, UserRound, X } from "lucide-react";
 import { parseLanusPdf } from "@/lib/lanus-parser";
 import { parseLanusExcel } from "@/lib/lanus-excel-parser";
 import { PORCELUZ_PLASTIC_PROVIDER, PORCELUZ_PORCELAIN_PROVIDER, parsePorceluzExcel } from "@/lib/porceluz-parser";
-import { loadBrokerProfile, loadProducts, loadProviders, removeManualImage, removeProviderCoverImage, resolveMissingProducts, saveBrokerProfile, saveManualImage, saveProvider, saveProviderCoverImage, setProductStatus, shareManualImage, upsertImportedProducts } from "@/lib/storage";
+import { downloadLocalBackup, loadBrokerProfile, loadProducts, loadProviders, removeManualImage, removeProviderCoverImage, resolveMissingProducts, restoreBackup, saveBrokerProfile, saveManualImage, saveProvider, saveProviderCoverImage, setProductStatus, shareManualImage, upsertImportedProducts } from "@/lib/storage";
 import { matchesProduct } from "@/lib/product-search";
 import { catalogProducts, catalogProviders, downloadCatalogExcel, downloadCatalogPdf, type CatalogFormat } from "@/lib/catalog-export";
 import type { BrokerProfile, Product, Provider } from "@/lib/types";
@@ -34,6 +34,7 @@ export function CatalogApp() {
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileError, setProfileError] = useState<string | null>(null);
+  const [restoringBackup, setRestoringBackup] = useState(false);
   const [query, setQuery] = useState("");
   const [providerFilter, setProviderFilter] = useState("all");
   const [loading, setLoading] = useState(true);
@@ -254,6 +255,14 @@ export function CatalogApp() {
     finally { setSavingProfile(false); }
   }
 
+  async function importBackup(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0]; event.target.value = "";
+    if (!file) return;
+    setRestoringBackup(true); setProfileError(null);
+    try { await restoreBackup(file); window.location.reload(); }
+    catch (cause) { setProfileError(messageOf(cause)); setRestoringBackup(false); }
+  }
+
   return (
     <main>
       <header className="topbar">
@@ -369,6 +378,7 @@ export function CatalogApp() {
           <label>WhatsApp<input type="tel" value={editingProfile.whatsapp} onChange={(event) => setEditingProfile({ ...editingProfile, whatsapp: event.target.value })}/></label>
           <label>Mail<input type="email" value={editingProfile.email} onChange={(event) => setEditingProfile({ ...editingProfile, email: event.target.value })}/></label>
         </div>
+        <div className="backup-actions"><button className="secondary" type="button" onClick={downloadLocalBackup}><Download size={17}/>Descargar respaldo</button><label className="secondary"><Upload size={17}/>{restoringBackup ? "Restaurando…" : "Restaurar respaldo"}<input hidden type="file" accept="application/json,.json" onChange={importBackup}/></label></div>
         {profileError && <p className="profile-error">{profileError}</p>}
         <button className="primary profile-save" disabled={savingProfile} onClick={persistProfile}>{savingProfile ? "Guardando…" : "Guardar"}</button>
       </section></div>}

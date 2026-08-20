@@ -46,6 +46,39 @@ async function uploadHostedImage(path: string, value: Blob): Promise<string> {
 
 const emptyBrokerProfile: BrokerProfile = { name: "", imageUrl: null, phone: "", whatsapp: "", email: "" };
 
+type AppBackup = { version: 1; products: Product[]; providers: Provider[]; customers: Customer[]; profile: BrokerProfile };
+
+export function downloadLocalBackup(): void {
+  const backup: AppBackup = {
+    version: 1,
+    products: localProducts(),
+    providers: JSON.parse(localStorage.getItem(PROVIDERS_KEY) ?? "[]") as Provider[],
+    customers: JSON.parse(localStorage.getItem(CUSTOMERS_KEY) ?? "[]") as Customer[],
+    profile: { ...emptyBrokerProfile, ...(JSON.parse(localStorage.getItem(BROKER_PROFILE_KEY) ?? "{}") as Partial<BrokerProfile>) },
+  };
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(new Blob([JSON.stringify(backup)], { type: "application/json" }));
+  link.download = `respaldo-codercup-${new Date().toISOString().slice(0, 10)}.json`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+export async function restoreBackup(file: File): Promise<void> {
+  const backup = JSON.parse(await file.text()) as Partial<AppBackup>;
+  if (backup.version !== 1 || !Array.isArray(backup.products) || !Array.isArray(backup.providers) || !Array.isArray(backup.customers) || !backup.profile) throw new Error("El archivo no es un respaldo válido de CoderCup.");
+  if (hostedStorage()) {
+    if (backup.providers.length) await apiUpsert("providers", backup.providers as unknown as Array<Record<string, unknown>>);
+    if (backup.products.length) await apiUpsert("products", backup.products as unknown as Array<Record<string, unknown>>);
+    if (backup.customers.length) await apiUpsert("customers", backup.customers as unknown as Array<Record<string, unknown>>);
+    await apiUpsert("profile", [{ id: "main", ...backup.profile }]);
+  } else {
+    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(backup.products));
+    localStorage.setItem(PROVIDERS_KEY, JSON.stringify(backup.providers));
+    localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(backup.customers));
+    localStorage.setItem(BROKER_PROFILE_KEY, JSON.stringify(backup.profile));
+  }
+}
+
 export async function loadBrokerProfile(): Promise<BrokerProfile> {
   if (hostedStorage()) return { ...emptyBrokerProfile, ...(await apiLoad<BrokerProfile>("profile"))[0] };
   const client = supabase();
