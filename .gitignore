@@ -1,0 +1,12 @@
+node_modules/
+.pnpm-store/
+.next/
+.next-stale-*/
+.vinext/
+.wrangler/
+dist/
+output/
+.env*.local
+coverage/
+tmp/
+*.tsbuildinfo
