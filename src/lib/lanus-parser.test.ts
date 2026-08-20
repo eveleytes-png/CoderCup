@@ -63,4 +63,9 @@ describe("importador Lanús", () => {
     expect(enrichLanusClavoDescription("2601025", "CLAVO CABEZA CHATA Y PERDIDA 10 X 25")).toBe("CLAVO CABEZA CHATA 10 X 25 1,63mm");
     expect(enrichLanusClavoDescription("2701025", "CLAVO CABEZA CHATA Y PERDIDA 10 X 25")).toBe("CLAVO CABEZA PERDIDA 10 X 25 1,63mm");
   });
+
+  it("reconstruye el nombre de los clavos cuando el PDF deja solo la medida", () => {
+    expect(enrichLanusClavoDescription("2601030", "10 X 30 1,63mm")).toBe("CLAVO CABEZA CHATA 10 X 30 1,63mm");
+    expect(enrichLanusClavoDescription("2701030", "10 X 30 1,63mm")).toBe("CLAVO CABEZA PERDIDA 10 X 30 1,63mm");
+  });
 });

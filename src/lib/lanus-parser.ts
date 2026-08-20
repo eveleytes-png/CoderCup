@@ -29,10 +29,13 @@ function clavoVariantFromCode(code: string): "CHATA" | "PERDIDA" | null {
 
 export function enrichLanusClavoDescription(code: string, value: string): string {
   const variant = clavoVariantFromCode(code);
-  const description = clean(value).replace(
+  let description = clean(value).replace(
     /CLAVO\s+CABEZA\s+CHATA\s+Y\s+PERDIDA/i,
     variant ? `CLAVO CABEZA ${variant}` : "CLAVO CABEZA CHATA Y PERDIDA",
   );
+  if (variant && /^\d{1,2}\s*[xX]\s*\d{2}\b/.test(description)) {
+    description = `CLAVO CABEZA ${variant} ${description}`;
+  }
   if (!/^(?:240|241|260|270)\d+$/.test(code) || !/CLAVO CABEZA (?:CHATA|PERDIDA)/i.test(description) || /\d[,.]\d{2}\s*mm/i.test(description)) return description;
   const measure = description.match(/\b(\d{1,2})\s*[xX]\s*(\d{2})\b/);
   const caliber = measure ? clavoCalibers.get(measure[1]) : undefined;
