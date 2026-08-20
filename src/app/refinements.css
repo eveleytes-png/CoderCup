@@ -233,3 +233,18 @@ tbody td:nth-child(2)>strong { font-size:14px; font-weight:800; }
   .providers-grid { display:flex; grid-template-columns:none; }
   .provider-card { width:auto; min-height:40px; }
 }
+
+/* Fecha compacta en proveedores y tipografía más liviana en productos. */
+.provider-card { height:50px; min-height:50px; padding-top:5px; padding-bottom:5px; border-radius:25px; }
+.provider-chip-copy { min-width:0; display:grid; gap:2px; text-align:left; }
+.provider-chip-updated { display:block; margin:0; color:var(--color-text-muted); font-size:11px; font-weight:400; line-height:1.1; letter-spacing:0; white-space:nowrap; }
+.product-link strong { color:var(--color-primary); font-family:"Courier New",Consolas,monospace; font-size:11px; font-weight:400; }
+.product-link span { color:var(--color-text-primary); font-size:14px; font-weight:500; }
+.product-link small { color:var(--color-text-secondary); font-size:12px; font-weight:400; }
+tbody td:nth-child(2)>strong { color:var(--color-text-primary); font-size:14px; font-weight:500; }
+tbody td:nth-child(2)>small { color:var(--color-text-secondary); font-size:12px; font-weight:400; }
+.price-cell.quote>strong { color:var(--color-text-secondary); font-size:12px; font-weight:400; }
+
+@media(max-width:767px) {
+  .provider-card { min-height:50px; }
+}

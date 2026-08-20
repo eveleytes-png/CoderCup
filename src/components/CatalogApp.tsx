@@ -291,9 +291,12 @@ export function CatalogApp() {
       <section className="providers-grid">
         {providers.map((provider) => {
           const count = products.filter((product) => product.providerId === provider.id).length;
+          const lastUpdated = products
+            .filter((product) => product.providerId === provider.id)
+            .reduce<string | null>((latest, product) => !latest || product.importedAt > latest ? product.importedAt : latest, null);
           const legalName = provider.legalName || provider.name;
           const displayName = provider.fantasyName?.trim() || legalName;
-          return <button type="button" className="provider-card" key={provider.id} onClick={() => openProvider(provider)}><div className={`provider-visual${provider.coverImageUrl ? " has-image" : ""}`}>{provider.coverImageUrl ? <img src={provider.coverImageUrl} alt=""/> : <span>{getInitials(displayName)}</span>}</div><span className="provider-chip-name">{displayName}</span><span className="provider-chip-count">{count} productos</span></button>;
+          return <button type="button" className="provider-card" key={provider.id} onClick={() => openProvider(provider)}><div className={`provider-visual${provider.coverImageUrl ? " has-image" : ""}`}>{provider.coverImageUrl ? <img src={provider.coverImageUrl} alt=""/> : <span>{getInitials(displayName)}</span>}</div><span className="provider-chip-copy"><span className="provider-chip-name">{displayName}</span>{lastUpdated && <small className="provider-chip-updated">{formatProviderDate(lastUpdated)}</small>}</span><span className="provider-chip-count">{count} productos</span></button>;
         })}
       </section>
 
@@ -306,7 +309,7 @@ export function CatalogApp() {
           <div className="table-wrap"><table><thead><tr><th>Producto</th><th>Precio de lista</th><th>Condiciones de pago</th><th>Imagen</th></tr></thead><tbody>
             {visible.map((product) => <tr key={product.id}>
               <td><button className="product-link" onClick={() => openProduct(product)}><strong>{product.code}</strong><span>{product.description}</span>{product.status === "discontinued" && <em className="discontinued-badge">Descontinuado</em>}<small>{product.providerName}</small></button></td>
-              <td><strong>{formatPrice(product)}</strong><small>{product.priceStatus === "quote" ? "Consultar al proveedor" : `${product.currency} · sin IVA`}</small></td>
+              <td className={`price-cell${product.priceStatus === "quote" ? " quote" : ""}`}><strong>{formatPrice(product)}</strong><small>{product.priceStatus === "quote" ? "Consultar al proveedor" : `${product.currency} · sin IVA`}</small></td>
               <td><div className="discounts">{product.paymentDiscounts.map((discount) => <span key={`${discount.label}-${discount.resultingPrice}`}><b>{money.format(discount.resultingPrice)}</b>{discount.label}</span>)}</div></td>
               <td><button className="image-button" onClick={() => openProduct(product)}>{product.imageUrl ? <img src={product.imageUrl} alt=""/> : <><ImagePlus size={20}/><span>Agregar</span></>}</button></td>
             </tr>)}
@@ -378,4 +381,11 @@ export function CatalogApp() {
 
 function messageOf(cause: unknown) { return cause instanceof Error ? cause.message : "Ocurrió un error inesperado."; }
 function formatPrice(product: Product) { return product.priceStatus === "quote" ? "A cotizar" : product.currency === "USD" ? dollars.format(product.listPrice) : money.format(product.listPrice); }
+function formatProviderDate(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const parts = new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric", timeZone: "America/Argentina/Buenos_Aires" }).formatToParts(date);
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((item) => item.type === type)?.value ?? "";
+  return `${part("day")} de ${part("month").replace(".", "")} de ${part("year")}`;
+}
 function getInitials(value: string) { return value.split(/\s+/).filter(Boolean).slice(0, 2).map((word) => word[0]?.toUpperCase()).join("") || "PR"; }
