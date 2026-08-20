@@ -21,8 +21,18 @@ const clavoCalibers = new Map([
   ["12", "1,80mm"], ["14", "2,20mm"], ["15", "2,50mm"], ["16", "2,70mm"], ["17", "3,25mm"],
 ]);
 
+function clavoVariantFromCode(code: string): "CHATA" | "PERDIDA" | null {
+  if (/^(?:240|270)\d+$/.test(code)) return "PERDIDA";
+  if (/^(?:241|260)\d+$/.test(code)) return "CHATA";
+  return null;
+}
+
 export function enrichLanusClavoDescription(code: string, value: string): string {
-  const description = clean(value);
+  const variant = clavoVariantFromCode(code);
+  const description = clean(value).replace(
+    /CLAVO\s+CABEZA\s+CHATA\s+Y\s+PERDIDA/i,
+    variant ? `CLAVO CABEZA ${variant}` : "CLAVO CABEZA CHATA Y PERDIDA",
+  );
   if (!/^(?:240|241|260|270)\d+$/.test(code) || !/CLAVO CABEZA (?:CHATA|PERDIDA)/i.test(description) || /\d[,.]\d{2}\s*mm/i.test(description)) return description;
   const measure = description.match(/\b(\d{1,2})\s*[xX]\s*(\d{2})\b/);
   const caliber = measure ? clavoCalibers.get(measure[1]) : undefined;

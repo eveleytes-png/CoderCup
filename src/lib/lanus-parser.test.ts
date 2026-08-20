@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { File } from "node:buffer";
 import { describe, expect, it } from "vitest";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
-import { groupPdfItems, parseLanusLines } from "./lanus-parser";
+import { enrichLanusClavoDescription, groupPdfItems, parseLanusLines } from "./lanus-parser";
 import { parseLanusExcel } from "./lanus-excel-parser";
 
 const source = "C:/Users/Evelin/Downloads/lanus alambre.pdf";
@@ -57,5 +57,10 @@ describe("importador Lanús", () => {
       priceStatus: "quote",
       paymentDiscounts: [],
     });
+  });
+
+  it("separa la variante correcta cuando el archivo une los encabezados de clavos", () => {
+    expect(enrichLanusClavoDescription("2601025", "CLAVO CABEZA CHATA Y PERDIDA 10 X 25")).toBe("CLAVO CABEZA CHATA 10 X 25 1,63mm");
+    expect(enrichLanusClavoDescription("2701025", "CLAVO CABEZA CHATA Y PERDIDA 10 X 25")).toBe("CLAVO CABEZA PERDIDA 10 X 25 1,63mm");
   });
 });
