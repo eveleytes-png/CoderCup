@@ -175,3 +175,42 @@ td { padding-top:15px; padding-bottom:15px; }
   .profile-fields label:first-child { grid-column:auto; }
   .profile-photo { flex-wrap:wrap; }
 }
+
+/* Escala tipográfica y lista compacta de proveedores. */
+.hero h1,.clients-heading h1 { font-size:32px; line-height:1.12; }
+.eyebrow { font-size:11px; letter-spacing:.16em; text-transform:uppercase; }
+.providers-grid { display:grid; grid-template-columns:1fr; gap:8px; }
+.provider-card { min-height:0; padding:11px 14px 11px 12px; gap:12px; border-left:4px solid var(--color-primary); border-radius:11px; transform:none; }
+.provider-card:hover { transform:translateY(-1px); box-shadow:var(--card-shadow-hover); }
+.provider-visual { width:40px; height:40px; flex:0 0 40px; border-radius:9px; box-shadow:0 3px 9px rgba(30,58,95,.16); }
+.provider-visual span { font-size:13px; }
+.provider-copy { flex:1; }
+.provider-card h2 { margin:0; color:var(--color-text-primary); font-size:16px; font-weight:800; }
+.provider-card p { margin-top:3px; color:var(--color-text-secondary); font-size:12px; }
+.provider-stats { min-width:190px; margin-left:auto; display:grid; grid-template-columns:auto auto; align-items:baseline; justify-content:end; column-gap:5px; text-align:right; }
+.provider-stats>strong { color:var(--color-primary); font-size:28px; font-weight:800; line-height:1; }
+.provider-stats>span { color:var(--color-text-secondary); font-size:11px; }
+.provider-card .provider-updated { grid-column:1/-1; margin-top:4px; color:var(--color-text-secondary); font-size:10px; font-weight:500; letter-spacing:0; }
+th { font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+.product-link strong { color:var(--color-primary); font-family:"Courier New",Consolas,monospace; font-size:12px; }
+.product-link span { font-size:14px; font-weight:800; }
+.product-link small { color:var(--color-text-secondary); font-size:12px; }
+tbody td:nth-child(2)>strong { font-size:14px; font-weight:800; }
+.table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.table-wrap table { min-width:760px; }
+
+@media(max-width:767px) {
+  .hero h1,.clients-heading h1 { font-size:24px; }
+  .topbar { min-height:76px; height:auto; padding:9px 16px; gap:8px; grid-template-columns:minmax(0,1fr) auto; }
+  .main-nav { width:100%; grid-column:1/-1; grid-row:2; }
+  .main-nav button { min-height:44px; flex:1; }
+  .header-account { grid-column:2; grid-row:1; }
+  .company-avatar { width:40px; height:40px; flex-basis:40px; }
+  .company-identity strong { max-width:135px; font-size:13px; }
+  .primary,.upload,.secondary,.danger { min-height:44px; }
+  .provider-card { min-height:64px; }
+  .provider-stats { min-width:112px; }
+  .provider-stats>strong { font-size:24px; }
+  .provider-card .provider-updated { max-width:132px; white-space:normal; }
+  th:nth-child(3),td:nth-child(3) { display:table-cell; }
+}

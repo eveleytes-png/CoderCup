@@ -292,8 +292,9 @@ export function CatalogApp() {
         {providers.map((provider) => {
           const count = products.filter((product) => product.providerId === provider.id).length;
           const lastModified = products.filter((product) => product.providerId === provider.id).reduce<string | null>((latest, product) => !latest || product.importedAt > latest ? product.importedAt : latest, null);
-          const providerName = provider.legalName || provider.name;
-          return <button type="button" className="provider-card" key={provider.id} onClick={() => openProvider(provider)}><div className={`provider-visual${provider.coverImageUrl ? " has-image" : ""}`}>{provider.coverImageUrl ? <img src={provider.coverImageUrl} alt=""/> : <span>{getInitials(providerName)}</span>}</div><div className="provider-copy"><small>PROVEEDOR</small><h2>{providerName}</h2>{provider.fantasyName && <p>{provider.fantasyName}</p>}<small className="provider-updated">Última actualización: {lastModified ? formatShortDate(lastModified) : "sin importaciones"}</small></div><strong>{count}<span>productos</span></strong></button>;
+          const legalName = provider.legalName || provider.name;
+          const displayName = provider.fantasyName?.trim() || legalName;
+          return <button type="button" className="provider-card" key={provider.id} onClick={() => openProvider(provider)}><div className={`provider-visual${provider.coverImageUrl ? " has-image" : ""}`}>{provider.coverImageUrl ? <img src={provider.coverImageUrl} alt=""/> : <span>{getInitials(displayName)}</span>}</div><div className="provider-copy"><h2>{displayName}</h2>{displayName !== legalName && <p>{legalName}</p>}</div><div className="provider-stats"><strong>{count}</strong><span>productos</span><small className="provider-updated">Última actualización: {lastModified ? formatShortDate(lastModified) : "sin importaciones"}</small></div></button>;
         })}
       </section>
 
