@@ -214,3 +214,22 @@ tbody td:nth-child(2)>strong { font-size:14px; font-weight:800; }
   .provider-card .provider-updated { max-width:132px; white-space:normal; }
   th:nth-child(3),td:nth-child(3) { display:table-cell; }
 }
+
+/* Proveedores como chips horizontales: el catálogo de productos mantiene el protagonismo. */
+.hero { padding-top:22px; padding-bottom:10px; align-items:center; }
+.hero>div { display:flex; align-items:center; min-height:40px; }
+.providers-grid { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.provider-card { width:auto; height:40px; min-height:40px; flex:0 0 auto; padding:5px 12px 5px 6px; gap:8px; border:1px solid var(--color-border); border-radius:20px; background:var(--color-surface); box-shadow:0 1px 3px rgba(0,0,0,.08); }
+.provider-card:hover { border-color:var(--color-primary); transform:none; box-shadow:0 3px 9px rgba(30,58,95,.14); }
+.provider-visual { width:28px; height:28px; flex:0 0 28px; border-radius:7px; box-shadow:none; }
+.provider-visual span { font-size:10px; }
+.provider-chip-name { color:var(--color-text-primary); font-size:13px; font-weight:700; white-space:nowrap; }
+.provider-chip-count { color:var(--color-text-secondary); font-size:12px; font-weight:500; white-space:nowrap; }
+.catalog { margin-top:18px; }
+
+@media(max-width:767px) {
+  .hero { padding-top:16px; padding-bottom:8px; }
+  .hero .primary { width:auto; min-height:44px; }
+  .providers-grid { display:flex; grid-template-columns:none; }
+  .provider-card { width:auto; min-height:40px; }
+}

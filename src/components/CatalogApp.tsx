@@ -264,7 +264,7 @@ export function CatalogApp() {
 
       {activeSection === "catalog" ? <>
       <section className="hero">
-        <div><span className="eyebrow">PROVEEDORES</span><h1>Todas tus listas, en un solo catálogo.</h1></div>
+        <div><span className="eyebrow">PROVEEDORES</span></div>
         <button className="primary" onClick={() => setChoosingProvider(true)} disabled={importing}>
           <FileUp size={20} />{importing ? "Procesando lista…" : products.length ? "Importar o actualizar" : "Importar una lista"}
         </button>
@@ -291,10 +291,9 @@ export function CatalogApp() {
       <section className="providers-grid">
         {providers.map((provider) => {
           const count = products.filter((product) => product.providerId === provider.id).length;
-          const lastModified = products.filter((product) => product.providerId === provider.id).reduce<string | null>((latest, product) => !latest || product.importedAt > latest ? product.importedAt : latest, null);
           const legalName = provider.legalName || provider.name;
           const displayName = provider.fantasyName?.trim() || legalName;
-          return <button type="button" className="provider-card" key={provider.id} onClick={() => openProvider(provider)}><div className={`provider-visual${provider.coverImageUrl ? " has-image" : ""}`}>{provider.coverImageUrl ? <img src={provider.coverImageUrl} alt=""/> : <span>{getInitials(displayName)}</span>}</div><div className="provider-copy"><h2>{displayName}</h2>{displayName !== legalName && <p>{legalName}</p>}</div><div className="provider-stats"><strong>{count}</strong><span>productos</span><small className="provider-updated">Última actualización: {lastModified ? formatShortDate(lastModified) : "sin importaciones"}</small></div></button>;
+          return <button type="button" className="provider-card" key={provider.id} onClick={() => openProvider(provider)}><div className={`provider-visual${provider.coverImageUrl ? " has-image" : ""}`}>{provider.coverImageUrl ? <img src={provider.coverImageUrl} alt=""/> : <span>{getInitials(displayName)}</span>}</div><span className="provider-chip-name">{displayName}</span><span className="provider-chip-count">{count} productos</span></button>;
         })}
       </section>
 
@@ -379,5 +378,4 @@ export function CatalogApp() {
 
 function messageOf(cause: unknown) { return cause instanceof Error ? cause.message : "Ocurrió un error inesperado."; }
 function formatPrice(product: Product) { return product.priceStatus === "quote" ? "A cotizar" : product.currency === "USD" ? dollars.format(product.listPrice) : money.format(product.listPrice); }
-function formatShortDate(value: string) { const date = new Date(value); return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat("es-AR", { day: "numeric", month: "short", year: "numeric" }).format(date).replace(".", ""); }
 function getInitials(value: string) { return value.split(/\s+/).filter(Boolean).slice(0, 2).map((word) => word[0]?.toUpperCase()).join("") || "PR"; }
